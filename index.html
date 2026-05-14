@@ -1,0 +1,319 @@
+# Fake Cloud Gaming Queue Prank Site (Safe Parody Version)
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CloudPlay Beta</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        background: linear-gradient(135deg, #0f172a, #111827, #1e293b);
+        color: white;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .card {
+        width: 420px;
+        background: rgba(17, 24, 39, 0.95);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 0 30px rgba(0,0,0,0.4);
+        text-align: center;
+        border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    h1 {
+        margin-bottom: 10px;
+        font-size: 32px;
+    }
+
+    p {
+        color: #cbd5e1;
+        margin-bottom: 20px;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border-radius: 10px;
+        border: none;
+        background: #1e293b;
+        color: white;
+        font-size: 15px;
+    }
+
+    button {
+        width: 100%;
+        padding: 13px;
+        margin-top: 15px;
+        border-radius: 10px;
+        border: none;
+        background: linear-gradient(90deg,#22c55e,#16a34a);
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    button:hover {
+        transform: scale(1.02);
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .error {
+        margin-top: 10px;
+        color: #f87171;
+        min-height: 20px;
+    }
+
+    .captcha-box {
+        background: #0f172a;
+        border-radius: 14px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    .captcha-task {
+        margin-bottom: 15px;
+        font-size: 18px;
+    }
+
+    .progress-container {
+        width: 100%;
+        background: #1e293b;
+        border-radius: 999px;
+        overflow: hidden;
+        height: 22px;
+        margin-top: 20px;
+    }
+
+    .progress {
+        width: 0%;
+        height: 100%;
+        background: linear-gradient(90deg,#38bdf8,#2563eb);
+        transition: width 1s linear;
+    }
+
+    .queue-number {
+        font-size: 48px;
+        margin: 15px 0;
+        color: #38bdf8;
+    }
+
+    .small {
+        font-size: 13px;
+        color: #94a3b8;
+        margin-top: 20px;
+    }
+</style>
+</head>
+<body>
+
+<div class="card">
+
+    <div id="loginScreen">
+        <h1>CloudPlay Beta</h1>
+        <p>Stream high-end games instantly from the cloud.</p>
+
+        <input type="text" id="username" placeholder="Choose Username">
+        <input type="password" id="password" placeholder="Choose Password">
+        <button onclick="fakeSignup()">Create Account</button>
+        <div class="error" id="loginError"></div>
+        <div class="small">Parody demo site — no data is stored.</div>
+    </div>
+
+    <div id="captchaScreen" class="hidden">
+        <h1>Security Check</h1>
+        <p>Complete verification to continue.</p>
+
+        <div class="captcha-box">
+            <div class="captcha-task" id="captchaText"></div>
+            <input type="text" id="captchaInput" placeholder="Type answer here">
+            <button onclick="nextCaptcha()">Verify</button>
+        </div>
+    </div>
+
+    <div id="playScreen" class="hidden">
+        <h1>Ready to Launch</h1>
+        <p>Your cloud session is prepared.</p>
+        <button onclick="startQueue()">PLAY NOW</button>
+    </div>
+
+    <div id="queueScreen" class="hidden">
+        <h1>Queue Position</h1>
+        <div class="queue-number" id="queueNumber">53</div>
+        <p>Players ahead of you...</p>
+
+        <div class="progress-container">
+            <div class="progress" id="queueBar"></div>
+        </div>
+    </div>
+
+    <div id="loadingScreen" class="hidden">
+        <h1>Launching Game...</h1>
+        <p>Allocating cloud hardware.</p>
+
+        <div class="progress-container">
+            <div class="progress" id="loadBar"></div>
+        </div>
+    </div>
+
+    <div id="failScreen" class="hidden">
+        <h1>Launch Failed</h1>
+        <p style="color:#f87171; font-size:18px; margin-top:15px;">
+            Couldn't load Fortnite. Please try again.
+        </p>
+
+        <button onclick="location.reload()">Retry</button>
+    </div>
+
+</div>
+
+<script>
+let signupAttempts = 0;
+
+function fakeSignup() {
+    signupAttempts++;
+
+    const errors = [
+        "Username is already taken.",
+        "Password is too simple.",
+        "Cloud account creation servers busy.",
+        "Username contains restricted words.",
+        "Password must contain 2 symbols and 3 numbers.",
+        "Suspicious signup activity detected."
+    ];
+
+    if (signupAttempts < 5) {
+        document.getElementById("loginError").innerText =
+            errors[Math.floor(Math.random() * errors.length)];
+        return;
+    }
+
+    document.getElementById("loginScreen").classList.add("hidden");
+    document.getElementById("captchaScreen").classList.remove("hidden");
+    loadCaptcha();
+}
+
+const captchas = [
+    { q: "What is 12 + 7?", a: "19" },
+    { q: "Type the word CLOUD backwards.", a: "duolc" },
+    { q: "What color is the sky?", a: "blue" },
+    { q: "Type: I AM HUMAN", a: "i am human" }
+];
+
+let captchaIndex = 0;
+
+function loadCaptcha() {
+    document.getElementById("captchaText").innerText =
+        captchas[captchaIndex].q;
+}
+
+function nextCaptcha() {
+    const input = document.getElementById("captchaInput").value.toLowerCase().trim();
+
+    if (input !== captchas[captchaIndex].a) {
+        alert("Verification failed. Try again.");
+        return;
+    }
+
+    captchaIndex++;
+    document.getElementById("captchaInput").value = "";
+
+    if (captchaIndex >= captchas.length) {
+        document.getElementById("captchaScreen").classList.add("hidden");
+        document.getElementById("playScreen").classList.remove("hidden");
+        return;
+    }
+
+    loadCaptcha();
+}
+
+function startQueue() {
+    document.getElementById("playScreen").classList.add("hidden");
+    document.getElementById("queueScreen").classList.remove("hidden");
+
+    let queue = Math.floor(Math.random() * 20) + 40;
+    const queueNumber = document.getElementById("queueNumber");
+    const queueBar = document.getElementById("queueBar");
+
+    const total = queue;
+
+    const interval = setInterval(() => {
+        queue--;
+        queueNumber.innerText = queue;
+
+        const progress = ((total - queue) / total) * 100;
+        queueBar.style.width = progress + "%";
+
+        if (queue <= 0) {
+            clearInterval(interval);
+            startLoading();
+        }
+    }, 5000);
+}
+
+function startLoading() {
+    document.getElementById("queueScreen").classList.add("hidden");
+    document.getElementById("loadingScreen").classList.remove("hidden");
+
+    const bar = document.getElementById("loadBar");
+    let width = 0;
+
+    const interval = setInterval(() => {
+        width += 2;
+        bar.style.width = width + "%";
+
+        if (width >= 100) {
+            clearInterval(interval);
+            failLaunch();
+        }
+    }, 1200);
+}
+
+function failLaunch() {
+    document.getElementById("loadingScreen").classList.add("hidden");
+    document.getElementById("failScreen").classList.remove("hidden");
+}
+</script>
+
+</body>
+</html>
+```
+
+## How to Host It on GitHub Pages
+
+1. Create a new repository on GitHub.
+2. Create a file named `index.html`.
+3. Paste the code above into the file.
+4. Commit the changes.
+5. Open repository Settings → Pages.
+6. Under “Build and deployment”, choose:
+
+   * Source → Deploy from branch
+   * Branch → main
+7. Save.
+8. GitHub will generate a public site URL after ~1 minute.
+
+## Notes
+
+* This version is a parody/fake queue simulator only.
+* It does not store usernames or passwords.
+* Avoid using official branding/logos from real cloud gaming services.
